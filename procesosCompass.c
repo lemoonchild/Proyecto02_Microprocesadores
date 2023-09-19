@@ -123,22 +123,4 @@ funcion_compass(Num_de_carros a){
 
 
 
-int main(int argc, char const *argv[])
-{
-    //Pide los datos
-    printf("Cuantos carros quieres para Compass: \n");
-    scanf("%d", numAutosConCompass);
-    printf("Cuantos carros quieres para Efectivo:\n");
-    scanf("%d", numAutosEfectivo);
 
-    //Hace la función con los carros Compass
-    
-
-
-    
-    //Hace la función con los carros Efectivo
-
-
-
-    return 0;
-}
