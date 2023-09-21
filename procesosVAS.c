@@ -32,7 +32,6 @@ double tiempoTotalEfectivo[3] = {0};
 
 double tiempoInicio; 
 int nextAutoType = 0; 
-omp_lock_t lock; 
 
 void compass(int number) {
     for (int i = 0; i < number; i++) {
@@ -114,15 +113,12 @@ int main(int argc, char const *argv[]) {
     scanf("%d", &numAutosEfectivo);
     printf("\nComenzando simulacion...\n");
 
-    omp_init_lock(&lock);
     double start_time = omp_get_wtime(); 
     distribucionAutos(numAutosConCompass, numAutosEfectivo);
     double end_time = omp_get_wtime(); 
 
     printf("\nFinalizando simualcion...\n"); 
     estadisticas(end_time - start_time);  
-
-    omp_destroy_lock(&lock);
 
     
 
