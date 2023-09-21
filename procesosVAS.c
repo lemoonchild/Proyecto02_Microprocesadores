@@ -51,12 +51,10 @@ void compass(int number) {
 void efectivo(int number) {
     for (int i = 0; i < number; i++) {
         double start_time = omp_get_wtime(); 
-        sleep(3);      
+        sleep(4);      
         #pragma omp critical
         {
             printf("\n\tEl auto esta pagando con efectivo."); 
-            printf("\n\tEsperando pago en efectivo...");
-            sleep(2);
             printf("\n\tGracias por pagar con efectivo, tenga buen viaje\n");
         }
         double end_time = omp_get_wtime();  
@@ -77,31 +75,38 @@ void estadisticas(double number) {
 }
 
 void distribucionAutos(int total_compass, int total_efectivo) {
-    int numKioscos = 3;
 
-    int autosPorKioscoCompass = total_compass / numKioscos;
-    int autosExtraCompass = total_compass % numKioscos;
+    #pragma omp parallel num_threads(6)
+    { //6 Hilos que hacen este proceso
+        int thread_id = omp_get_thread_num();
+            int numKioscos = 3;
 
-    int autosPorKioscoEfectivo = total_efectivo / numKioscos;
-    int autosExtraEfectivo = total_efectivo % numKioscos;
+        int autosPorKioscoCompass = total_compass / numKioscos;
+        int autosExtraCompass1 = (total_compass % numKioscos != 0 ) ? 1: 0; //Si hay residuo se suma 1 carro al hilo
+        int autosExtraCompass2 = (total_compass % numKioscos == 2 ) ? 1: 0;
 
-    #pragma omp parallel for
-    for (int i = 0; i < numKioscos; i++) {
-        for (int j = 0; j < (autosPorKioscoCompass + (i < autosExtraCompass ? 1 : 0) + autosPorKioscoEfectivo + (i < autosExtraEfectivo ? 1 : 0)); j++) {
-            if (j % 2 == 0) {
-                if (j/2 < autosPorKioscoEfectivo + (i < autosExtraEfectivo ? 1 : 0)) {
-                    efectivo(1);
-                } else {
-                    compass(1);
-                }
-            } else {
-                if (j/2 < autosPorKioscoCompass + (i < autosExtraCompass ? 1 : 0)) {
-                    compass(1);
-                } else {
-                    efectivo(1);
+        int autosPorKioscoEfectivo = total_efectivo / numKioscos;
+        int autosExtraEfectivo1 = (total_efectivo % numKioscos != 0 ) ? 1: 0;
+        int autosExtraEfectivo2 = (total_efectivo % numKioscos == 2 ) ? 1: 0;
+        #pragma omp for
+        for (int i = 0; i < 6; i++) {
+            if (thread_id == i) {
+                if (i == 0) {
+                    compass(autosPorKioscoCompass + autosExtraCompass1);
+                } else if (i == 1) {
+                    compass(autosPorKioscoCompass + autosExtraCompass2);
+                } else if (i == 2) {
+                    compass(autosPorKioscoCompass);
+                } else if (i == 3) {
+                    efectivo(autosPorKioscoEfectivo + autosExtraEfectivo1);
+                } else if (i == 4) {
+                    efectivo(autosPorKioscoEfectivo + autosExtraEfectivo2);
+                } else if (i == 5) {
+                    efectivo(autosPorKioscoEfectivo);
                 }
             }
         }
+        
     }
 }
 
@@ -119,8 +124,6 @@ int main(int argc, char const *argv[]) {
 
     printf("\nFinalizando simualcion...\n"); 
     estadisticas(end_time - start_time);  
-
-    
 
     return 0;
 }
