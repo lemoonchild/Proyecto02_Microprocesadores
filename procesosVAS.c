@@ -1,3 +1,16 @@
+
+/*--------------------------------------------------------
+* UNIVERSIDAD DEL VALLE DE GUATEMALA
+* FACULTAD DE INGENIERÍA
+* DEPARTAMENTO DE CIENCIA DE LA COMPUTACIÓ
+* CC3086 Programación de Microprocesadores
+* 
+* Proyecto 02 - Fase 02 
+* Fecha: 21/09/2023
+* Descripción: Simulacion de la VAS
+* --------------------------------------------------------*/
+
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -54,7 +67,7 @@ void efectivo(int number) {
 }
 
 void estadisticas(double number) {
-    printf("\n--- Estadisticas ---\n");
+    printf("\n--- Estadisticas de la simulacion ---\n");
     for (int i = 0; i < 3; i++) {
         printf("Tiempo del kiosco Compass %d: %f segundos\n", i+1, tiempoTotalCompass[i]);
     }
@@ -94,18 +107,24 @@ void distribucionAutos(int total_compass, int total_efectivo) {
 }
 
 int main(int argc, char const *argv[]) {
-    printf("\nBienvenido a la estacion de pago de la VAS\n");
+    printf("\nBienvenido a la simulacion de estacion de pago de la VAS\n");
     printf("\nPor favor indica cuantos carros desea pagar con Compass: ");
     scanf("%d", &numAutosConCompass);
     printf("\nPor favor indica cuantos carros deseas pagar con efectivo: ");
     scanf("%d", &numAutosEfectivo);
+    printf("\nComenzando simulacion...\n");
 
     omp_init_lock(&lock);
     double start_time = omp_get_wtime(); 
     distribucionAutos(numAutosConCompass, numAutosEfectivo);
     double end_time = omp_get_wtime(); 
+
+    printf("\nFinalizando simualcion...\n"); 
     estadisticas(end_time - start_time);  
+
     omp_destroy_lock(&lock);
+
+    
 
     return 0;
 }
